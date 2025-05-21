@@ -5,12 +5,15 @@ import {auth, db} from './firebase';
 import { setDoc, doc } from 'firebase/firestore';
 import {toast} from 'react-toastify';
 import { redirect, useNavigate } from 'react-router-dom';
+import { Button, Card } from "@mui/material";
 
 function Login() {
   const navigate = useNavigate("");
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const handleClick = () => {
+    navigate("/signup");
+  }
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -29,65 +32,23 @@ function Login() {
     }
     
   }
-  const handleRegister = async (e)=>{
-    e.preventDefault();
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      const user = auth.currentUser;
-      console.log(user);
-      if(user) {
-        await setDoc(doc(db, "Users", user.uid), {
-          email: user.email,
-          name: name
-        })
-      }
-      toast.success("User Registered Successfully",{
-        position: "top-center"
-      });
-      setName("");
-      setEmail("");
-      setPassword("");
-      console.log("User Registered Successfully");
-      
-    } catch (error) {
-      console.log(error.message);
-  const cleanMsg = error.message
-  .replace(/^Firebase:\s*/, '');
-  //.replace(/\s*\(.*?\)\.?$/, '');
-
-      toast.error(cleanMsg,{
-        position: "bottom-center"
-      });
-    }
-  }
+  
 	return(
-		<div className="main">  	
-      <input type="checkbox" id="chk" aria-hidden="true" />
+		<div className="main" style={{display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
 
-      <div className="signup">
-        <form onSubmit={handleRegister}>
-          <label htmlFor="chk" aria-hidden="true">Sign up</label>
-          <input type="text" name="txt" placeholder="User name" value={name} 
-          onChange={(e)=>setName(e.target.value)} required />
-          <input type="email" name="email" placeholder="Email" value={email} 
-          onChange={(e)=>setEmail(e.target.value)} required />
-          <input type="password" name="pswd" placeholder="Password" value={password} 
-          onChange={(e)=>setPassword(e.target.value)} required />
-          <button>Sign up</button>
-        </form>
-      </div>
-
-      <div className="login">
-        <form onSubmit={handleLogin}>
-          <label htmlFor="chk" aria-hidden="true">Login</label>
+      <Card variant="outlined" sx={{display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", width: {xs:"90%", sm:"70%", md:"400px"}, margin:"auto", height:"auto", padding: 3, mt: 5}}>
+        <form onSubmit={handleLogin} style={{display:"flex", flexDirection: "column", padding:"15px", gap:"20px"}}>
           <input type="email" name="email" value={email} onChange={(e)=>setEmail(e.target.value)} 
-          placeholder="Email" required />
+          placeholder="Email" style={{padding:"10px", fontSize:"1rem"}} required />
           <input type="password" name="pswd" value={password} onChange={(e)=>setPassword(e.target.value)} 
-          placeholder="Password" required />
-          <button onClick={()=> window.location.href="/forgot-password"}>Forgot Password</button>
-          <button>Login</button>
+          placeholder="Password" required style={{padding:"10px", fontSize:"1rem"}}/>
+          <Button variant="outlined" onClick={()=> window.location.href="/forgot-password"}>Forgot Password</Button>
+          <Button variant="contained" onClick={handleLogin}>login</Button>
         </form>
-      </div>
+      
+      Don't have an account? 
+      <Button variant="contained" onClick={handleClick}>signup</Button>
+      </Card>
     </div>
 	)
 }

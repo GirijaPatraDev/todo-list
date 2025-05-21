@@ -7,6 +7,7 @@ import Todo from './comps/Todo';
 import ResetPassword from './comps/ResetPassword';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import Account from './comps/Account';
+import Signup from './comps/Signup';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="todo" element={<Todo />} />
         <Route path="forgot-password" element={<ResetPassword />} />
         <Route path="account" element={<Account />} />
