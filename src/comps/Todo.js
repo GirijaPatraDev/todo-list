@@ -1,13 +1,14 @@
 import Header from "./Header";
 import TaskList from "./TaskList";
 import '../App.css';
+import { useState } from "react";
 
 function Todo() {
+    const [searchQuery, setSearchQuery] = useState('');
     return(
         <div className="todo">
-            <Header />
-            <h2>Todo List</h2>
-            <TaskList />
+            <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery}/>
+            <TaskList searchQuery={searchQuery}/>
         </div>
     );
 }

@@ -4,12 +4,16 @@ import '../App.css';
 import '../css/TaskList.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-function TaskList() {
+function TaskList({searchQuery}) {
     const [tasks, setTasks] = useState([]);
     const [task, setTask] = useState("");
     const [markedTasks, setMarkedTasks] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedPriority, setSelectedPriority] = useState("");
+    const searchedTasks = searchQuery ? tasks.filter(
+        task=>
+            task.text.toLowerCase().includes(searchQuery.toLowerCase())
+    ) : tasks;
     const handleAddTask = (e) => {
         e.preventDefault();
         if (task.trim()) {
@@ -62,7 +66,7 @@ function TaskList() {
             </form>
             <ol>
                 {
-                   tasks.map((element, index) => 
+                   searchedTasks.map((element, index) => 
                    (
                     <div style={{display:"flex", alignItems: "center", gap:"10px"}}>
                     <li key={index} className={markedTasks.includes(element) ? "marked" : ""}>{element.text}</li> 

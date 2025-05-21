@@ -1,6 +1,7 @@
 import {doc, getDoc} from 'firebase/firestore';
 import { auth, db } from './firebase';
 import { useEffect, useState } from 'react';
+import Header from './Header';
 function Account() {
     const [userDetails, setUserDetails] = useState(null);
     useEffect(()=>{
@@ -21,6 +22,7 @@ function Account() {
 
     return(
         <div>
+            <Header />
             {
                 userDetails ? (
                     <ul>
