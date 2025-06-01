@@ -1,23 +1,41 @@
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { addTask, deleteTask, toggleMarkAsDone } from "../redux/taskSlice";
 import { toast } from "react-toastify";
 import '../App.css';
 import '../css/TaskList.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import {v4 as uid} from 'uuid';
+
 function TaskList({searchQuery}) {
-    const [tasks, setTasks] = useState([]);
+    //const [tasks, setTasks] = useState([]);
     const [task, setTask] = useState("");
-    const [markedTasks, setMarkedTasks] = useState([]);
+    //const [markedTasks, setMarkedTasks] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
-    const [selectedPriority, setSelectedPriority] = useState("");
+    const [selectedPriority, setSelectedPriority] = useState("Low");
+
+    const dispatch = useDispatch();
+    const tasks = useSelector((state) => state.tasks.taskList);
+    //const markedTasks = useSelector((state) => state.tasks.markedTasks);
+
     const searchedTasks = searchQuery ? tasks.filter(
         task=>
             task.text.toLowerCase().includes(searchQuery.toLowerCase())
     ) : tasks;
+
+
     const handleAddTask = (e) => {
         e.preventDefault();
         if (task.trim()) {
-            setTasks([...tasks, {text: task, date: selectedDate, priority: selectedPriority}]);
+            //setTasks([...tasks, {text: task, date: selectedDate, priority: selectedPriority}]);
+            dispatch(addTask({
+                id: uid(),
+                text: task, 
+                date: selectedDate,
+                priority: selectedPriority,
+                markedAsDone: false
+            }))
             console.log(task);
             setTask("");
             setSelectedDate(null);  
@@ -31,19 +49,25 @@ function TaskList({searchQuery}) {
         }
         
     }
-    const handleDltTask = (e, taskToDlt)=>{
+
+    const handleDltTask = (e, taskToDltID)=>{
         e.preventDefault();
-        const filteredTasks = tasks.filter(t => t!== taskToDlt);
-        setTasks(filteredTasks);
-        console.log("tasks: "  , tasks, " after removing task: ", taskToDlt);
+        //const filteredTasks = tasks.filter(t => t!== taskToDlt);
+        //setTasks(filteredTasks);
+        dispatch(deleteTask(taskToDltID));
+        console.log("tasks: "  , tasks, " after removing task: ", taskToDltID);
     }
-    const handleMarkDone = (taskToMark)=>{
-        setMarkedTasks(prev =>
+
+    const handleMarkDone = (taskToMarkID)=>{
+        /*setMarkedTasks(prev =>
             prev.includes(taskToMark) ? 
             prev.filter(t => t!==taskToMark) :
             [...prev, taskToMark]
-        );
+        );*/
+        dispatch(toggleMarkAsDone(taskToMarkID));
     };
+
+
     const handleEditTask = (t)=>{
         
     }
@@ -69,14 +93,14 @@ function TaskList({searchQuery}) {
                    searchedTasks.map((element, index) => 
                    (
                     <div style={{display:"flex", alignItems: "center", gap:"10px"}}>
-                    <li key={index} className={markedTasks.includes(element) ? "marked" : ""}>{element.text}</li> 
+                    <li key={index} className={element.markedAsDone === true ? "marked" : ""}>{element.text}</li> 
                     <p>{element.date ? element.date.toLocaleDateString() : new Date().toLocaleDateString()}</p>
                     <p>{element.priority? element.priority: "Low"}</p>
                     <button style={{width:"100px"}} onClick={(element) => handleEditTask(element)}>
                         Edit Task</button>
-                    <button style={{width:"100px"}} onClick={(e)=>handleDltTask(e, element)}>
+                    <button style={{width:"100px"}} onClick={(e)=>handleDltTask(e, element.id)}>
                         Delete Task</button>
-                    <button style={{width:"100px"}} onClick={() => handleMarkDone(element)}>
+                    <button style={{width:"100px"}} onClick={() => handleMarkDone(element.id)}>
                         Mark as Done</button>
                     </div>
                    )
